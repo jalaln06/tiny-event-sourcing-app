@@ -15,26 +15,19 @@ data class UserAggregate(
     var userName: String = ""
     var userLogin: String = ""
     var userPassword: String = ""
-    var orders = mutableMapOf<UUID, OrderEntity>()
-    var children = mutableMapOf<UUID,ChildEntity>()
+    val defaultPaymentId: String = ""
+    val defaultAddressId: String = ""
+    var paymentMethods = mutableMapOf<UUID,PaymentMethod>()
+    var deliveryAddresses = mutableMapOf<UUID,DeliveryAddress>()
 }
 
-data class OrderEntity(
-    val id: UUID = UUID.randomUUID(),
-    val name: String,
-    val itemsAssigned: MutableSet<UUID>
-)
-data class ChildEntity(
-    val id: UUID = UUID.randomUUID(),
-    val name: String
-)
 data class DeliveryAddress(
     val address: String,
-    val preference: Boolean
+    val addressId: UUID
 )
 data class PaymentMethod(
     val cardNumber: String,
-    val preference: Boolean
+    val paymentMethodId: UUID
 )
 fun UserAggregate.createUser(
     name: String,
@@ -50,5 +43,19 @@ fun UserAggregate.createUser(
         userLogin=login,
         userPassword=password,
         userName=name
+    )
+}
+
+fun UserAggregate.addAddress(
+    address: String,
+): UserAddedAddressEvent {
+    if (createdAt != -1L) {
+        throw NoSuchElementException()
+    }
+
+    return UserAddedAddressEvent(
+        address=address,
+        addressId=UUID.randomUUID(),
+        userId = aggregateId
     )
 }
