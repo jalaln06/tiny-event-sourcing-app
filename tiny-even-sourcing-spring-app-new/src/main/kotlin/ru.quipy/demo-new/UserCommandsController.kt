@@ -12,7 +12,7 @@ class UserCommandsController {
     @GetMapping("/User/add")
     fun createUser(user: UserCreatedDTO) {
         this.demoESService.update(UUID.randomUUID().toString()){
-            it.createUser(user.userName,user.userPassword,user.userLogin)
+            it.createUserCommand(user.userName,user.userPassword,user.userLogin)
         }
     }
 }
