@@ -1,5 +1,6 @@
 package ru.quipy.`demo-new`
 
+import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Controller
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
@@ -9,12 +10,21 @@ import java.util.*
 
 @Controller
 class UserCommandsController {
+    @Autowired
     private lateinit var demoESService: EventSourcingService<UserAggregate>
     @GetMapping("/User/add")
     fun createUser(user: UserCreatedDTO) {
         this.demoESService.update(UUID.randomUUID().toString()){
             it.createUserCommand(user.userName,user.userPassword,user.userLogin)
         }
+    }
+    @GetMapping("/Test")
+    fun createUser() {
+        print("TESTROUTEHANDLED")
+        this.demoESService.update(UUID.randomUUID().toString()){
+            it.createUserCommand("Ivan","12345","VANYA12345")
+        }
+        print("TestRouteHandling finished")
     }
     @GetMapping("/User/{userId}/SetAddress/{addressId}")
     fun setDefaultAddress(

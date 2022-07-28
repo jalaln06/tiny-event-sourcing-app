@@ -16,8 +16,8 @@ data class UserAggregate(
     var userName: String = ""
     var userLogin: String = ""
     var userPassword: String = ""
-    val defaultPaymentId: UUID = TODO()
-    var defaultAddressId: UUID
+    lateinit var defaultPaymentId: UUID
+    lateinit var defaultAddressId: UUID
     var paymentMethods = mutableMapOf<UUID, PaymentMethod>()
     var deliveryAddresses = mutableMapOf<UUID, DeliveryAddress>()
 }
@@ -37,7 +37,7 @@ fun UserAggregate.createUserCommand(
     password: String,
     login: String
 ): UserCreatedEvent {
-
+    print("User created in useraggregate")
     return UserCreatedEvent(
         userId = aggregateId,
         userLogin = login,
