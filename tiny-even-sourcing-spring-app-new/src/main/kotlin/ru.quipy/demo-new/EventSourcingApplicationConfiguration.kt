@@ -1,4 +1,4 @@
-package ru.quipy.`demo-new`
+package ru.quipy.demo
 
 import org.slf4j.LoggerFactory
 import ru.quipy.core.AggregateRegistry
@@ -7,23 +7,19 @@ import ru.quipy.streams.AggregateSubscriptionsManager
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
-import ru.quipy.demo.AnnotationBasedUserEventsSubscriber
 import ru.quipy.streams.AggregateEventStreamManager
 import javax.annotation.PostConstruct
 
 @Configuration
-class EventSourcingApplicationConfigurationV2 {
+class EventSourcingApplicationConfiguration {
 
-    private val logger = LoggerFactory.getLogger(EventSourcingApplicationConfigurationV2::class.java)
-
-    @Autowired
-    private lateinit var aggregateRegistry: AggregateRegistry
+    private val logger = LoggerFactory.getLogger(EventSourcingApplicationConfiguration::class.java)
 
     @Autowired
     private lateinit var subscriptionsManager: AggregateSubscriptionsManager
 
     @Autowired
-    private lateinit var userEventSubscriber: AnnotationBasedUserEventsSubscriber
+    private lateinit var projectEventSubscriber: AnnotationBasedProjectEventsSubscriber
 
     @Autowired
     private lateinit var eventSourcingServiceFactory: EventSourcingServiceFactory
@@ -33,10 +29,14 @@ class EventSourcingApplicationConfigurationV2 {
 
     @PostConstruct
     fun init() {
-        aggregateRegistry.register(UserAggregate::class) {
-        }
+        // autoscan enabled see event.sourcing.auto-scan-enabled property
+//        aggregateRegistry.register(ProjectAggregate::class) {
+//            registerEvent(TagCreatedEvent::class)
+//            registerEvent(TaskCreatedEvent::class)
+//            registerEvent(TagAssignedToTaskEvent::class)
+//        }
 
-        subscriptionsManager.subscribe<UserAggregate>(userEventSubscriber)
+        subscriptionsManager.subscribe<ProjectAggregate>(projectEventSubscriber)
 
         eventStreamManager.maintenance {
             onRecordHandledSuccessfully { streamName, eventName ->
@@ -50,6 +50,6 @@ class EventSourcingApplicationConfigurationV2 {
     }
 
     @Bean
-    fun demoESService() = eventSourcingServiceFactory.getOrCreateService(UserAggregate::class)
+    fun demoESService() = eventSourcingServiceFactory.getOrCreateService(ProjectAggregate::class)
 
 }
