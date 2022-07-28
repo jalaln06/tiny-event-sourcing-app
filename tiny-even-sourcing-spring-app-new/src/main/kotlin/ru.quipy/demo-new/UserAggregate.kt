@@ -3,7 +3,7 @@ package ru.quipy.`demo-new`
 import ru.quipy.core.AggregateType
 import ru.quipy.domain.Aggregate
 import java.util.*
-import kotlin.NoSuchElementException
+
 // TODO ID first
 // TODO Createdat
 @AggregateType(aggregateEventsTableName = "aggregate-user")
@@ -76,13 +76,14 @@ fun UserAggregate.changePasswordCommand(
 }
 
 fun UserAggregate.setDefaultAddressCommand(
-    addressId: UUID,
+    addressId: String,
 ): UserSetDefaultAddressEvent{
-    if( !this.deliveryAddresses.contains(addressId)){
+    val iAddressId = UUID.fromString(addressId)
+    if( !this.deliveryAddresses.contains(iAddressId)){
         throw java.lang.IllegalArgumentException("There is no such address")
     }
     return UserSetDefaultAddressEvent(
-        addressId = addressId,
+        addressId = iAddressId,
         userId = aggregateId
     )
 }
