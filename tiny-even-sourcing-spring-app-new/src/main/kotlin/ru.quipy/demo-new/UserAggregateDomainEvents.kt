@@ -9,6 +9,7 @@ const val USER_ADDED_PAYMENT_EVENT = "USER_ADDED_PAYMENT_EVENT"
 const val USER_ADDED_ADDRESS_EVENT = "USER_ADDED_ADDRESS_EVENT"
 const val USER_CHANGED_PASSWORD_EVENT="USER_CHANGED_PASSWORD_EVENT"
 const val USER_SET_DEFAULT_ADDRESS_EVENT= "USER_SET_DEFAULT_ADDRESS_EVENT"
+const val USER_SET_DEFAULT_PAYMENT_EVENT= "USER_SET_DEFAULT_PAYMENT_EVENT"
 @DomainEvent(name = USER_CREATED_EVENT)
 class UserCreatedEvent(
     val userLogin: String,
@@ -76,5 +77,17 @@ class UserSetDefaultAddressEvent(
 ){
     override fun applyTo(aggregate: UserAggregate) {
         aggregate.defaultAddressId=addressId
+    }
+}
+@DomainEvent(name = USER_SET_DEFAULT_PAYMENT_EVENT)
+class UserSetDefaultPaymentEvent(
+        val paymentMethodId : UUID,
+        val userId: String
+) : Event<UserAggregate>(
+        name = USER_SET_DEFAULT_PAYMENT_EVENT,
+        aggregateId = userId
+){
+    override fun applyTo(aggregate: UserAggregate) {
+        aggregate.defaultPaymentId=paymentMethodId
     }
 }

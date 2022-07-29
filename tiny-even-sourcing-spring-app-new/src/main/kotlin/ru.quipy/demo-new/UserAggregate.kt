@@ -37,7 +37,7 @@ fun UserAggregate.createUserCommand(
     password: String,
     login: String
 ): UserCreatedEvent {
-    print("User created in useraggregate")
+
     return UserCreatedEvent(
         userId = aggregateId,
         userLogin = login,
@@ -59,15 +59,15 @@ fun UserAggregate.addAddressCommand(
 
 fun UserAggregate.changePasswordCommand(
     password: String,
-): UserChangedPasswordEvent{
-    if( password == this.userPassword){
-        throw java.lang.IllegalArgumentException("this password has already been used, try another one!")
+): UserChangedPasswordEvent {
+    if (password == this.userPassword) {
+        throw IllegalArgumentException("Can't change password: previous password")
     }
-    if( password == ""){
-        throw java.lang.IllegalArgumentException("there is no password")
+    if (password.isBlank()) {
+        throw IllegalArgumentException("Can't change password: empty provided")
     }
-    if( password.length<8){
-        throw java.lang.IllegalArgumentException("Password is too weak")
+    if (password.length < 8) {
+        throw IllegalArgumentException("Password is too weak")
     }
     return UserChangedPasswordEvent(
         password = password,
@@ -76,14 +76,24 @@ fun UserAggregate.changePasswordCommand(
 }
 
 fun UserAggregate.setDefaultAddressCommand(
-    addressId: String,
-): UserSetDefaultAddressEvent{
-    val iAddressId = UUID.fromString(addressId)
-    if( !this.deliveryAddresses.contains(iAddressId)){
-        throw java.lang.IllegalArgumentException("There is no such address")
+    addressId: UUID,
+): UserSetDefaultAddressEvent {
+    if (!this.deliveryAddresses.contains(addressId)) {
+        throw IllegalArgumentException("There is no such address")
     }
     return UserSetDefaultAddressEvent(
-        addressId = iAddressId,
+        addressId = addressId,
         userId = aggregateId
+    )
+}
+fun UserAggregate.setDefaultPaymentCommand(
+        paymentMethodId: UUID,
+): UserSetDefaultPaymentEvent {
+    if (!this.deliveryAddresses.contains(paymentMethodId)) {
+        throw IllegalArgumentException("There is no such address")
+    }
+    return UserSetDefaultPaymentEvent(
+            paymentMethodId = paymentMethodId,
+            userId = aggregateId
     )
 }

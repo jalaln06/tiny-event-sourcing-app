@@ -4,15 +4,19 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Controller
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
+import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
+import org.springframework.web.bind.annotation.RequestMapping
+import org.springframework.web.bind.annotation.RestController
 import ru.quipy.core.EventSourcingService
 import java.util.*
 
-@Controller
+@RestController
+@RequestMapping("/user")
 class UserCommandsController {
     @Autowired
     private lateinit var demoESService: EventSourcingService<UserAggregate>
-    @GetMapping("/User/add")
+    @PostMapping
     fun createUser(user: UserCreatedDTO) {
         this.demoESService.update(UUID.randomUUID().toString()){
             it.createUserCommand(user.userName,user.userPassword,user.userLogin)
@@ -28,7 +32,7 @@ class UserCommandsController {
     }
     @GetMapping("/User/{userId}/SetAddress/{addressId}")
     fun setDefaultAddress(
-        @PathVariable addressId: String,
+        @PathVariable addressId: UUID,
         @PathVariable userId: String){
         this.demoESService.update(userId){
             it.setDefaultAddressCommand(addressId)
